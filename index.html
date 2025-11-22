@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         urls.push(url);
         renderList();
-        imageUrlInput.value = ''; 
+        imageUrlInput.value = ''; // 💡 修正: 確定後に入力欄をクリア
         imageUrlInput.focus();
     }
     
@@ -391,7 +391,10 @@ document.addEventListener('DOMContentLoaded', function() {
     addButton.addEventListener('click', addImage);
     imageUrlInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
+            e.preventDefault(); // Enterキーによるフォームのデフォルト送信を防ぐ
             addImage();
+            // 💡 修正: addImage関数内でクリア処理を行うため、ここでは不要だが念のため
+            // imageUrlInput.value = ''; 
         }
     });
     downloadAllButton.addEventListener('click', downloadAllImages);
