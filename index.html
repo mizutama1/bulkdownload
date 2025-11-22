@@ -103,8 +103,6 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-        
-        .note { margin-top: 25px; padding: 15px; border: 1px solid #f39c12; background-color: #fffbe6; color: #e67e22; border-radius: 5px; }
     </style>
 </head>
 <body>
@@ -132,8 +130,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const addButton = document.getElementById('addButton');
     const imageList = document.getElementById('imageList');
     const downloadAllButton = document.getElementById('downloadAllButton');
-    const imageCount = document.getElementById('count');
     
+    // 💡 削除: const imageCount = document.getElementById('count'); 
+
     const urls = [];
 
     // URLを正規化（プロトコルを補完）する関数
@@ -202,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         urls.push(url);
         renderList();
-        imageUrlInput.value = ''; // 💡 修正: 確定後に入力欄をクリア
+        imageUrlInput.value = ''; // 修正済み
         imageUrlInput.focus();
     }
     
@@ -262,8 +261,8 @@ document.addEventListener('DOMContentLoaded', function() {
             imageList.appendChild(listItem);
         });
         
-        // カウントとダウンロードボタンの状態を更新
-        imageCount.textContent = urls.length;
+        // 💡 削除: imageCount.textContent = urls.length;
+        // ダウンロードボタンの状態を更新
         downloadAllButton.disabled = urls.length === 0;
     }
 
@@ -393,8 +392,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.key === 'Enter') {
             e.preventDefault(); // Enterキーによるフォームのデフォルト送信を防ぐ
             addImage();
-            // 💡 修正: addImage関数内でクリア処理を行うため、ここでは不要だが念のため
-            // imageUrlInput.value = ''; 
         }
     });
     downloadAllButton.addEventListener('click', downloadAllImages);
