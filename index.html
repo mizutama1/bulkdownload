@@ -116,7 +116,7 @@
         <input type="text" id="imageUrl" placeholder="画像のURLを入力してください (例: https://...)">
         <button class="btn-add" id="addButton">画像を追加</button>
     </div>
-
+    
     <ul id="imageList">
         </ul>
     
@@ -130,8 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const addButton = document.getElementById('addButton');
     const imageList = document.getElementById('imageList');
     const downloadAllButton = document.getElementById('downloadAllButton');
-    
-    // 💡 削除: const imageCount = document.getElementById('count'); 
+    const imageCount = document.getElementById('count'); 
 
     const urls = [];
 
@@ -201,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         urls.push(url);
         renderList();
-        imageUrlInput.value = ''; // 修正済み
+        imageUrlInput.value = ''; 
         imageUrlInput.focus();
     }
     
@@ -261,7 +260,11 @@ document.addEventListener('DOMContentLoaded', function() {
             imageList.appendChild(listItem);
         });
         
-        // 💡 削除: imageCount.textContent = urls.length;
+        // カウントを更新 
+        if (imageCount) {
+             imageCount.textContent = urls.length;
+        }
+       
         // ダウンロードボタンの状態を更新
         downloadAllButton.disabled = urls.length === 0;
     }
@@ -300,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // 1. プロンプトで連番パターンを取得
-        let pattern = prompt("ダウンロードファイル名のパターンを入力してください。\n連番を入れたい場所に「#」を桁数分入力してください。", "photo-##");
+        let pattern = prompt("ダウンロードファイル名のパターンを入力してください。\n連番を入れたい場所に「#」を桁数分入力してください。\nphoto-##");
 
         if (pattern === null) {
             return;
@@ -324,9 +327,14 @@ document.addEventListener('DOMContentLoaded', function() {
             totalDigits = 2; 
         }
         
-        // パターンから連番を除いた部分が空欄だった場合の処理
-        if (usePattern.replace(placeholder, '').trim() === "") {
-             usePattern = "image-" + placeholder;
+        // パターンから連番を除いた部分が空欄だった場合の処理 (例: "###" のみの場合)
+        // 💡 修正: プレースホルダーのみの場合、接頭辞を付けないように修正
+        let isOnlyPlaceholder = usePattern.replace(placeholder, '').trim() === "";
+        if (!isOnlyPlaceholder) {
+             // プレースホルダー以外に文字がある場合のみ、接頭辞のチェックを行う（今回は変更なし）
+             // if (usePattern.replace(placeholder, '').trim() === "") {
+             //      usePattern = "image-" + placeholder;
+             // }
         }
 
 
@@ -365,11 +373,16 @@ document.addEventListener('DOMContentLoaded', function() {
             // 2. パターンと連番を組み合わせてファイル名を生成
             const sequenceNumberString = getSequenceString(index + 1, totalDigits); 
             
-            // プレースホルダーを連番に置き換える (最初のマッチだけ置き換える)
+            // プレースホルダーを連番に置き換える 
             const baseFilename = usePattern.replace(placeholder, sequenceNumberString);
-
-            const filename = `${baseFilename}.${ext}`;
             
+            // 💡 拡張子がパターンに含まれていない場合は、自動で付ける
+            let filename = baseFilename;
+            const extMatch = baseFilename.match(/\.([a-z0-9]+)$/i);
+            if (!extMatch) {
+                filename = `${baseFilename}.${ext}`;
+            }
+
             link.download = filename;
             
             // ダウンロードをトリガー
@@ -390,7 +403,7 @@ document.addEventListener('DOMContentLoaded', function() {
     addButton.addEventListener('click', addImage);
     imageUrlInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
-            e.preventDefault(); // Enterキーによるフォームのデフォルト送信を防ぐ
+            e.preventDefault(); 
             addImage();
         }
     });
